@@ -16,6 +16,8 @@ export interface ComparisonCase {
   afterImage: string;
   beforeLabel?: string;
   afterLabel?: string;
+  beforePosition?: string;
+  afterPosition?: string;
 }
 
 export const COMPARISON_CASES: ComparisonCase[] = [
@@ -36,6 +38,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/roof-after.webp",
     beforeLabel: "WATER-DAMAGED SLAB",
     afterLabel: "PROTECTED WATERPROOF ROOF",
+    beforePosition: "center 40%",
+    afterPosition: "center 40%",
   },
   {
     id: "concrete",
@@ -54,6 +58,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/concrete-after.webp",
     beforeLabel: "SPALLED & DETERIORATED CONCRETE",
     afterLabel: "ENGINEERED RESTORED CONCRETE",
+    beforePosition: "center center",
+    afterPosition: "center center",
   },
   {
     id: "basement",
@@ -72,6 +78,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/basement-after.webp",
     beforeLabel: "ACTIVE BASEMENT SEEPAGE",
     afterLabel: "SEALED DRY BASEMENT ENCLOSURE",
+    beforePosition: "center center",
+    afterPosition: "center center",
   },
   {
     id: "floor",
@@ -90,6 +98,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/floor-after.webp",
     beforeLabel: "WORN UNSEALED CONCRETE FLOOR",
     afterLabel: "PROTECTED INDUSTRIAL EPOXY FINISH",
+    beforePosition: "center 65%",
+    afterPosition: "center 65%",
   },
   {
     id: "bathroom",
@@ -108,6 +118,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/bathroom-after.webp",
     beforeLabel: "LEAKING SUBFLOOR JOINT",
     afterLabel: "WATERPROOFED TILE SUBSTRATE",
+    beforePosition: "center center",
+    afterPosition: "center center",
   },
   {
     id: "wall",
@@ -126,6 +138,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/wall-after.webp",
     beforeLabel: "DAMP PEELING WALL EFFLORESCENCE",
     afterLabel: "RESTORED DAMP-FREE PROTECTED WALL",
+    beforePosition: "center 30%",
+    afterPosition: "center 30%",
   },
   {
     id: "tank",
@@ -144,6 +158,8 @@ export const COMPARISON_CASES: ComparisonCase[] = [
     afterImage: "/assets/tank-after.webp",
     beforeLabel: "CONTAMINATED LEAKING RESERVOIR",
     afterLabel: "SEALED FOOD-GRADE WATER TANK",
+    beforePosition: "center center",
+    afterPosition: "center center",
   },
 ];
 
@@ -327,6 +343,9 @@ export function BeforeAfterSection() {
                   fill
                   sizes="(max-width: 900px) 100vw, 720px"
                   className="object-cover"
+                  style={{
+                    objectPosition: currentCase.afterPosition || "center center",
+                  }}
                   priority={activeCaseIndex === 0}
                 />
                 <div className="ba-tag ba-tag-after">
@@ -351,6 +370,9 @@ export function BeforeAfterSection() {
                     fill
                     sizes="(max-width: 900px) 100vw, 720px"
                     className="object-cover"
+                    style={{
+                      objectPosition: currentCase.beforePosition || "center center",
+                    }}
                     priority={activeCaseIndex === 0}
                   />
                   <div className="ba-tag ba-tag-before">
@@ -411,6 +433,9 @@ export function BeforeAfterSection() {
                         fill
                         sizes="160px"
                         className="object-cover"
+                        style={{
+                          objectPosition: c.afterPosition || "center center",
+                        }}
                       />
                     </div>
                     <span>{c.tabLabel}</span>

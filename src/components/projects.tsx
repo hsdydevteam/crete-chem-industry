@@ -27,6 +27,7 @@ export interface ProjectItem {
   title: string;
   description: string;
   image: string;
+  imagePosition?: string;
   sector: string;
   systems: string[];
   specs: {
@@ -48,6 +49,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "PAF Base Nur Khan — Joint filling, perimeter detailing, and slab waterproofing at the critical tarmac area using elastomeric polyurethane systems.",
     image: "/assets/projects/roof-waterproofing.webp",
+    imagePosition: "center 40%",
     sector: "Defense & Aviation Infrastructure",
     systems: [
       "Sikalastic 510 Polyurethane Membrane",
@@ -71,6 +73,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "Zhob Airbase — Comprehensive heavy-duty runway repair, slab rehabilitation, and expansion joint sealing under extreme thermal expansion cycles.",
     image: "/assets/projects/runway-joint-sealing.webp",
+    imagePosition: "center 55%",
     sector: "Military Airfield & Concrete Pavements",
     systems: [
       "Sikaflex Heavy-Duty Polyurethane Joint Sealant",
@@ -94,6 +97,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "Artillery Mess, Rawalpindi — Non-shrink precision leveling concrete combined with a seamless Sikalastic 510 protective barrier coating.",
     image: "/assets/projects/concrete-leveling.webp",
+    imagePosition: "center 50%",
     sector: "Institutional & Military Infrastructure",
     systems: [
       "Sika Level-30 High-Performance Leveling Mortar",
@@ -117,6 +121,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "Gadoon Textile Mills — Structural load-capacity upgrade and flexural beam reinforcement using high-tensile carbon-fibre composite systems.",
     image: "/assets/projects/cfrp-structural-repair.webp",
+    imagePosition: "center 45%",
     sector: "Heavy Textile & Manufacturing Industry",
     systems: [
       "SikaWrap Carbon-Fibre Unidirectional Fabrics",
@@ -140,6 +145,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "Industrial Textile Mill — Precast concrete girder strengthening and seismic shear retrofitting using structural carbon-fibre laminates and wrap.",
     image: "/assets/projects/cfrp-girder-wrap.webp",
+    imagePosition: "center 50%",
     sector: "Industrial Processing & Precast Spans",
     systems: [
       "Sika CarboDur Structural CFRP Laminates / Plates",
@@ -163,6 +169,7 @@ const COMPLETED_PROJECTS: ProjectItem[] = [
     description:
       "Military Hospitals (MH / CMH) — Heavy roof treatment with fibre mesh reinforcement, pressure grouting, and precast girder structural stabilization.",
     image: "/assets/projects/girder-restrengthening.webp",
+    imagePosition: "center 45%",
     sector: "Healthcare & Critical Public Facilities",
     systems: [
       "High-Tensile Fibre Mesh Insertion Matrix",
@@ -233,6 +240,9 @@ export function ProjectsGrid() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    style={{
+                      objectPosition: p.imagePosition || "center center",
+                    }}
                   />
                   {/* Subtle edge gradient to preserve image clarity while ensuring tag legibility */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#061A35]/80 via-transparent to-transparent pointer-events-none" />
@@ -269,7 +279,7 @@ export function ProjectsGrid() {
                   </div>
 
                   {/* Bottom Bar: Action Link + Scope Metadata */}
-                  <div className="pt-3.5 border-t border-[#1B5A86]/50 flex items-center justify-between w-full mt-auto">
+                  <div className="pt-3.5 border-t border-[#1B5A86]/50 flex items-center justify-between w-full mt-auto min-h-[44px]">
                     <span className="text-xs font-bold text-[#00D9FF] flex items-center gap-1.5 group-hover:text-white transition-colors">
                       <span>View Engineering Scope</span>
                       <ArrowRight
@@ -277,7 +287,7 @@ export function ProjectsGrid() {
                         className="group-hover:translate-x-1 transition-transform"
                       />
                     </span>
-                    <span className="text-[11px] font-medium text-[#84A3C1] bg-[#071D38] px-2 py-0.5 rounded border border-[#1B5A86]/50">
+                    <span className="text-[11px] font-medium text-[#84A3C1] bg-[#071D38] px-2.5 py-1 rounded border border-[#1B5A86]/50">
                       Case Study
                     </span>
                   </div>
@@ -305,11 +315,11 @@ export function ProjectsGrid() {
             <button
               type="button"
               onClick={() => inspect("roof-waterproofing")}
-              className="shrink-0 px-4 py-2.5 rounded-lg bg-[#071D38] hover:bg-[#00D9FF] hover:text-[#061A35] border border-[#1B5A86] hover:border-[#00D9FF] text-xs font-bold text-[#00A8FF] hover:text-[#061A35] transition-all cursor-pointer flex items-center gap-2"
+              className="shrink-0 px-5 py-3 rounded-lg bg-[#071D38] hover:bg-[#00D9FF] hover:text-[#061A35] border border-[#1B5A86] hover:border-[#00D9FF] text-xs font-bold text-[#00A8FF] hover:text-[#061A35] transition-all cursor-pointer flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto"
             >
-              <Sparkles size={14} />
+              <Sparkles size={15} />
               <span>Book Site Inspection</span>
-              <ChevronRight size={14} />
+              <ChevronRight size={15} />
             </button>
           </div>
         </div>
@@ -345,10 +355,10 @@ export function ProjectsGrid() {
             <button
               type="button"
               onClick={() => setSelectedProject(null)}
-              className="w-9 h-9 rounded-full bg-[#0B2D4C] hover:bg-[#00D9FF] text-white hover:text-[#061A35] flex items-center justify-center transition-colors cursor-pointer border border-[#1B5A86]/40 text-lg font-bold shrink-0"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#0B2D4C] hover:bg-[#00D9FF] text-white hover:text-[#061A35] flex items-center justify-center transition-colors cursor-pointer border border-[#1B5A86]/40 text-lg font-bold shrink-0"
               aria-label="Close project modal"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 
@@ -361,6 +371,9 @@ export function ProjectsGrid() {
                 fill
                 sizes="(max-width: 780px) 100vw, 780px"
                 className="object-cover"
+                style={{
+                  objectPosition: selectedProject.imagePosition || "center center",
+                }}
               />
               <div className="absolute top-3 left-3 bg-[#061A35]/95 backdrop-blur-sm border border-[#1B5A86] text-[#00D9FF] text-xs font-bold px-3 py-1 rounded">
                 {selectedProject.badge}
@@ -445,7 +458,7 @@ export function ProjectsGrid() {
             <div className="pt-3 border-t border-[#1B5A86]/40 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#00A8FF] hover:bg-[#00D9FF] text-[#061A35] font-bold text-sm transition-all shadow-md cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 min-h-[46px] rounded-lg bg-[#00A8FF] hover:bg-[#00D9FF] text-[#061A35] font-bold text-sm transition-all shadow-md cursor-pointer"
                 onClick={() => {
                   setSelectedProject(null);
                   inspect("roof-waterproofing");
@@ -459,7 +472,7 @@ export function ProjectsGrid() {
                 href={`https://wa.me/${contact.whatsapp}?text=${whatsappProjectInquiry(selectedProject)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-lg bg-[#16A34A] hover:bg-[#20C96A] text-white font-bold text-sm transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 min-h-[46px] rounded-lg bg-[#16A34A] hover:bg-[#20C96A] text-white font-bold text-sm transition-colors cursor-pointer"
               >
                 <MessageSquare size={16} />
                 <span>WhatsApp Case Inquiry</span>
