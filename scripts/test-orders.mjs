@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import { api } from '../server/worker.js';
+import { localDatabase } from './local-db.mjs';
+import { products } from '../data.js';
+process.loadEnvFile('.env.admin.local');
+const DB=localDatabase(':memory:');const env={...process.env,DB};
+const origin='https://example.test';let cookie='';
+async function call(path,method='GET',body,extra={}){return api(new Request(origin+path,{method,headers:{origin,'Content-Type':'application/json',cookie,'cf-connecting-ip':'test',...extra},...(body?{body:JSON.stringify(body)}:{})}),env);}
+assert.equal((await call('/api/admin/orders')).status,401);
+assert.equal((await call('/api/admin/orders/CC-abc','PATCH',{status:'Completed'})).status,401);
+assert.equal((await call('/api/admin/login','POST',{password:'wrong'})).status,401);
+assert.equal((await call('/api/orders','POST',{}, {origin:'https://evil.test'})).status,403);
+const request={requestId:crypto.randomUUID(),customer:{name:'Test Customer',phone:'03001234567',address:'Test project address',notes:'Test only'},items:products.map(p=>({id:p.id,quantity:2}))};
+let response=await call('/api/orders','POST',request);assert.equal(response.status,201);const saved=await response.json();assert.ok(saved.whatsappUrl.startsWith('https://wa.me/923008548956?text='));assert.ok(decodeURIComponent(saved.whatsappUrl).includes('2 × Admixtures'));
+response=await call('/api/orders','POST',request);assert.equal(response.status,200);assert.equal((await response.json()).order.id,saved.order.id);
+assert.equal((await call('/api/orders','POST',{...request,items:[{id:'fake',quantity:1}]})).status,400);
+assert.equal((await call('/api/orders','POST',{...request,items:[{id:'coatings',quantity:-1}]})).status,400);
+assert.equal((await call('/api/orders','POST',{...request,customer:{...request.customer,name:'Different'}})).status,409);
+const {pbkdf2Sync}=await import('node:crypto');
+const testPassword='test-password-only';env.ADMIN_PASSWORD_HASH=pbkdf2Sync(testPassword,env.ADMIN_PASSWORD_SALT,100000,32,'sha256').toString('hex');
+response=await call('/api/admin/login','POST',{password:testPassword});assert.equal(response.status,200);cookie=response.headers.get('set-cookie').split(';')[0];assert.match(response.headers.get('set-cookie'),/HttpOnly/);assert.match(response.headers.get('set-cookie'),/Secure/);assert.match(response.headers.get('set-cookie'),/SameSite=Strict/);
+response=await call('/api/admin/orders');let data=await response.json();assert.equal(data.orders.length,1);assert.equal(data.orders[0].items.length,6);
+response=await call(`/api/admin/orders/${saved.order.id}`,'PATCH',{status:'Confirmed'});assert.equal(response.status,200);assert.equal((await response.json()).order.status,'Confirmed');
+assert.equal((await call(`/api/admin/orders/${saved.order.id}`,'PATCH',{status:'Bogus'})).status,400);
+await call('/api/admin/logout','POST',{});assert.equal((await call('/api/admin/orders')).status,401);
+for(let i=0;i<9;i++)response=await call('/api/admin/login','POST',{password:'wrong'},{'cf-connecting-ip':'rate-limit-test'});assert.equal(response.status,429);
+DB.close();
+console.log('Passed: private order access, password-only login, secure cookie, CSRF, six-family checkout, WhatsApp destination, duplicate protection, validation, status updates, logout, rate limiting.');

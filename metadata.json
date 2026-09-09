@@ -1,0 +1,8 @@
+{
+  "name": "CRETE-CHEM",
+  "description": "Professional waterproofing, construction chemicals, concrete repair and technical application support across Pakistan. Authorized Agent of Sika Pakistan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
