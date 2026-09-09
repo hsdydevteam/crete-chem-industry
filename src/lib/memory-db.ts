@@ -1,11 +1,16 @@
 import "server-only";
-import { pbkdf2Sync } from "node:crypto";
 import { seed } from "./seed";
 import type { Db } from "mongodb";
 
 type Doc = Record<string, unknown>;
 type Query = Record<string, unknown>;
 type UpdateDoc = Record<string, unknown> | unknown[];
+
+function dateValue(value: unknown): number {
+  return value instanceof Date
+    ? value.getTime()
+    : new Date(value as string | number).getTime();
+}
 
 function matchesDoc(doc: Doc, query: Query): boolean {
   if (!query || Object.keys(query).length === 0) return true;
@@ -72,6 +77,17 @@ function matchesDoc(doc: Doc, query: Query): boolean {
       continue;
     }
 
+    if (
+      key === "expires_at" &&
+      typeof condition === "object" &&
+      condition !== null &&
+      "$lt" in condition
+    ) {
+      const target = (condition as { $lt: unknown }).$lt;
+      if (!(dateValue(doc.expires_at) < dateValue(target))) return false;
+      continue;
+    }
+
     if (typeof condition === "object" && condition !== null) {
       if ("$in" in condition) {
         const inArr = (condition as { $in: unknown[] }).$in;
@@ -99,9 +115,18 @@ function applyUpdate(doc: Doc, update: UpdateDoc, isInsert = false): void {
     const expired =
       !doc.expires_at ||
       new Date(doc.expires_at as string | number | Date).getTime() < now;
+    const firstStage = update[0] as
+      | { $set?: Record<string, unknown> }
+      | undefined;
+    const set = firstStage?.$set;
+    const expiresExpression = set?.expires_at as
+      | { $cond?: unknown[] }
+      | undefined;
+    const cond = expiresExpression?.$cond;
+    const nextExpiry = cond?.[1] ?? new Date(now + 900000);
     if (expired) {
       doc.count = 1;
-      doc.expires_at = new Date(now + 900000);
+      doc.expires_at = nextExpiry;
     } else {
       doc.count = ((doc.count as number) || 0) + 1;
     }
@@ -350,21 +375,17 @@ export class MemoryDb {
       ]),
     );
 
-    const salt = process.env.ADMIN_PASSWORD_SALT || "cc_default_salt_2026";
-    const hash =
-      process.env.ADMIN_PASSWORD_HASH ||
-      pbkdf2Sync("admin", salt, 100000, 32, "sha256").toString("hex");
-
-    this.collections.set(
-      "admins",
-      new MemoryCollection("admins", [
-        {
-          _id: "admin",
-          passwordHash: hash,
-          passwordSalt: salt,
-        },
-      ]),
-    );
+    const admin =
+      process.env.ADMIN_PASSWORD_HASH && process.env.ADMIN_PASSWORD_SALT
+        ? [
+            {
+              _id: "admin",
+              passwordHash: process.env.ADMIN_PASSWORD_HASH,
+              passwordSalt: process.env.ADMIN_PASSWORD_SALT,
+            },
+          ]
+        : [];
+    this.collections.set("admins", new MemoryCollection("admins", admin));
   }
 
   collection<T = Doc>(name: string): MemoryCollection {

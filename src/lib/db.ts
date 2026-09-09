@@ -10,8 +10,9 @@ declare global {
 export function database(): Promise<Db> {
   if (!global.creteDatabase) {
     global.creteDatabase = connect().catch((err) => {
+      if (process.env.NODE_ENV === "production") throw err;
       console.warn(
-        "[AI Studio] MongoDB connection failed or unconfigured, using in-memory database:",
+        "[Crete-Chem] MongoDB is unavailable; using the in-memory database for local development:",
         err instanceof Error ? err.message : String(err),
       );
       return getMemoryDb();
